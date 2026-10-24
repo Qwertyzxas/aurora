@@ -66,7 +66,9 @@ export function sceneStep(frames: Keyframe[], scroll: number): SceneState {
  * same share of the distance per second whatever the FPS.
  */
 export function damp(current: number, target: number, lambda: number, dt: number): number {
-  return target + (current - target) * Math.exp(-lambda * dt);
+  const next = target + (current - target) * Math.exp(-lambda * dt);
+  // exponential smoothing never lands exactly: snap once it's visually there
+  return Math.abs(next - target) < 1e-4 ? target : next;
 }
 
 export function dampState(current: SceneState, target: SceneState, lambda: number, dt: number): SceneState {

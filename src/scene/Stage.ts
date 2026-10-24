@@ -161,7 +161,9 @@ export class Stage {
   private tick(time: number) {
     const dt = this.lastTime ? Math.min(time - this.lastTime, 0.1) : 0.016;
     this.lastTime = time;
-    this.current = this.options.reducedMotion ? { ...this.target } : dampState(this.current, this.target, 5, dt);
+    // reduced motion: the target only changes once per section, and the model glides
+    // there over ~1 s (a calmer rate) instead of jumping
+    this.current = dampState(this.current, this.target, this.options.reducedMotion ? 3 : 5, dt);
     this.pointerSmooth.lerp(this.pointer, 1 - Math.exp(-3 * dt));
 
     this.canvas.style.opacity = String(this.current.opacity);

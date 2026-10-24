@@ -80,6 +80,12 @@ describe('damp', () => {
     expect(a).toBeCloseTo(1 - Math.exp(-5), 10);
   });
 
+  it('lands exactly on the target instead of approaching it forever', () => {
+    let v = 1;
+    for (let i = 0; i < 600; i++) v = damp(v, 0, 3, 1 / 60);
+    expect(v).toBe(0);
+  });
+
   it('smooths every field of the scene state', () => {
     const next = dampState(s({ x: 0, glow: 0 }), s({ x: 1, glow: 1 }), 1000, 1);
     expect(next.x).toBeCloseTo(1);
