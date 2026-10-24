@@ -70,10 +70,11 @@ async function start() {
     lenis = new Lenis({ autoRaf: false, lerp: 0.09 });
     connectLenis(lenis);
     scrollAnimations(stage);
-    // keyframe triggers are created after the pins so their positions include pin spacing
-    if (stage) driveScene(stage);
     setupPointerEffects();
   }
+  // keyframe triggers are created after the pins so their positions include pin spacing.
+  // Reduced motion keeps the product on screen too — it just doesn't fly between sections.
+  if (stage) driveScene(stage, reducedMotion);
   setupAnchors(lenis);
   stage?.start();
 

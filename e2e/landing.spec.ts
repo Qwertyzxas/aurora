@@ -80,6 +80,14 @@ test.describe('fallbacks', () => {
     for (const callout of await callouts.all()) await expect(callout).toHaveCSS('opacity', '1');
     await expect(page.locator('.callout__line').first()).toBeHidden();
     await expect(page.locator('.pin-spacer')).toHaveCount(0);
+
+    // the product stays on screen below the first section — it just doesn't fly around
+    const stage = page.locator('#stage');
+    await expect(stage).toHaveCSS('position', 'fixed');
+    await scrollToSection(page, '#colors');
+    await expect(stage).toHaveCSS('opacity', '1');
+    await scrollToSection(page, '#scenarios', 100);
+    await expect(stage).toHaveCSS('opacity', '0');
   });
 
   test('shows a static poster when WebGL is unavailable', async ({ page }) => {

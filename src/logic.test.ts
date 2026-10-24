@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { CALLOUTS, COLORS, LIGHT_MODES, SPECS } from './content';
 import { formatNumber, hexToRgb } from './lib/format';
 import { ANCHOR_IDS } from './scene/anchors';
-import { damp, dampState, sceneAt, type Keyframe, type SceneState } from './scene/state';
+import { stepKeyframes } from './anim/keyframes';
+import { damp, dampState, sceneAt, sceneStep, type Keyframe, type SceneState } from './scene/state';
 
 const s = (over: Partial<SceneState>): SceneState => ({ x: 0, y: 0, scale: 1, rotY: 0, rotX: 0, explode: 0, glow: 0, opacity: 1, ...over });
 
@@ -35,6 +36,37 @@ describe('sceneAt', () => {
     ];
     expect(sceneAt(jump, 0).x).toBe(0);
     expect(sceneAt(jump, 1).x).toBe(1);
+  });
+});
+
+describe('sceneStep (reduced motion)', () => {
+  const frames: Keyframe[] = [
+    { at: -100, state: s({ x: 0 }) },
+    { at: 500, state: s({ x: 1, explode: 1 }) },
+    { at: 900, state: s({ opacity: 0 }) },
+  ];
+
+  it('holds each section state without interpolating', () => {
+    expect(sceneStep(frames, 0).x).toBe(0);
+    expect(sceneStep(frames, 499).x).toBe(0);
+    expect(sceneStep(frames, 500)).toMatchObject({ x: 1, explode: 1 });
+    expect(sceneStep(frames, 899).explode).toBe(1);
+    expect(sceneStep(frames, 5000).opacity).toBe(0);
+  });
+
+  it('uses the first state above the first keyframe', () => {
+    expect(sceneStep(frames, -500).x).toBe(0);
+  });
+});
+
+describe('stepKeyframes', () => {
+  it('keeps one state per section: the last one defined for it', () => {
+    const steps = stepKeyframes();
+    const triggers = steps.map((k) => k.trigger);
+    expect(new Set(triggers).size).toBe(triggers.length);
+    expect(steps.find((k) => k.trigger === '#inside')!.state.explode).toBe(1);
+    expect(steps.find((k) => k.trigger === '#scenarios')!.state.opacity).toBe(0);
+    expect(steps.find((k) => k.trigger === '.footer')!.state.opacity).toBe(0);
   });
 });
 

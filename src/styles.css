@@ -845,34 +845,12 @@ section {
 }
 
 /* ── static layouts: reduced motion, no WebGL, small screens ── */
-/* without the pinned exploded view the callouts become a plain list */
-.reduced-motion .callouts,
-.no-webgl .callouts {
-  display: grid;
-  width: auto;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-  margin-top: 48px;
-}
-
-.reduced-motion .callout,
-.no-webgl .callout {
-  position: static;
-  transform: none;
-  pointer-events: auto;
-}
-
+/* no live connector lines: the cards stay as a plain column next to the (still) model */
 .reduced-motion .callout__dot,
 .reduced-motion .callout__line,
 .no-webgl .callout__dot,
 .no-webgl .callout__line {
   display: none;
-}
-
-.reduced-motion .callout__card,
-.no-webgl .callout__card {
-  position: static;
-  width: auto;
 }
 
 .reduced-motion .inside__pin,
@@ -883,10 +861,6 @@ section {
   min-height: 100vh;
   padding-top: 120px;
   padding-bottom: 80px;
-}
-
-.reduced-motion #stage {
-  position: absolute;
 }
 
 .reduced-motion .scenarios__track {

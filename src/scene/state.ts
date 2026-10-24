@@ -48,6 +48,20 @@ export function sceneAt(frames: Keyframe[], scroll: number): SceneState {
 }
 
 /**
+ * Reduced-motion variant: no interpolation, the scene simply shows the state of the
+ * section being read (the last keyframe at or before `scroll`).
+ */
+export function sceneStep(frames: Keyframe[], scroll: number): SceneState {
+  if (!frames.length) throw new Error('sceneStep needs at least one keyframe');
+  let current = frames[0]!;
+  for (const frame of frames) {
+    if (frame.at > scroll) break;
+    current = frame;
+  }
+  return { ...current.state };
+}
+
+/**
  * Frame-rate independent exponential smoothing: the current value covers the
  * same share of the distance per second whatever the FPS.
  */

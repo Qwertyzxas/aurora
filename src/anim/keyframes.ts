@@ -43,3 +43,13 @@ export const KEYFRAMES: KeySpec[] = [
   { trigger: '.footer', start: 'top bottom', state: CTA_STATE },
   { trigger: '.footer', start: 'top 70%', state: { ...CTA_STATE, opacity: 0 } },
 ];
+
+/**
+ * Reduced motion: one still state per section (the last defined for it, e.g. the
+ * fully exploded view for #inside), switched when the section reaches mid-screen.
+ */
+export function stepKeyframes(): KeySpec[] {
+  const last = new Map<string, KeySpec>();
+  for (const key of KEYFRAMES) last.set(key.trigger, key);
+  return [...last.values()].map((key) => ({ trigger: key.trigger, start: 'top center', state: key.state }));
+}

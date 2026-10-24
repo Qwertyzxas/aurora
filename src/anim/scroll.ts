@@ -5,9 +5,9 @@ import type Lenis from 'lenis';
 import { formatNumber } from '../lib/format';
 import { $ } from '../dom/render';
 import type { Stage } from '../scene/Stage';
-import { sceneAt, type Keyframe } from '../scene/state';
+import { sceneAt, sceneStep, type Keyframe } from '../scene/state';
 import type { AnchorId } from '../content';
-import { KEYFRAMES } from './keyframes';
+import { KEYFRAMES, stepKeyframes } from './keyframes';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -18,19 +18,24 @@ export function connectLenis(lenis: Lenis) {
   gsap.ticker.lagSmoothing(0);
 }
 
-/** Resolves keyframes to pixel positions and feeds the 3D scene on every frame. */
-export function driveScene(stage: Stage) {
-  const triggers = KEYFRAMES.map((key) => ScrollTrigger.create({ trigger: key.trigger, start: key.start }));
+/**
+ * Resolves keyframes to pixel positions and feeds the 3D scene on every frame.
+ * With reduced motion the scene jumps between per-section still states instead.
+ */
+export function driveScene(stage: Stage, reducedMotion: boolean) {
+  const keys = reducedMotion ? stepKeyframes() : KEYFRAMES;
+  const evaluate = reducedMotion ? sceneStep : sceneAt;
+  const triggers = keys.map((key) => ScrollTrigger.create({ trigger: key.trigger, start: key.start }));
   let frames: Keyframe[] = [];
   const resolve = () => {
-    frames = KEYFRAMES.map((key, i) => ({ at: triggers[i]!.start + (key.offset ?? 0) * window.innerHeight, state: key.state })).sort(
+    frames = keys.map((key, i) => ({ at: triggers[i]!.start + (key.offset ?? 0) * window.innerHeight, state: key.state })).sort(
       (a, b) => a.at - b.at,
     );
   };
   ScrollTrigger.addEventListener('refresh', resolve);
   resolve();
   gsap.ticker.add(() => {
-    stage.target = sceneAt(frames, window.scrollY);
+    stage.target = evaluate(frames, window.scrollY);
   });
 }
 
