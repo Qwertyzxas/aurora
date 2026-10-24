@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aurora One — звук, который видно</title>
+    <meta name="description" content="Концепт-лендинг умной колонки Aurora One: процедурная 3D-модель на Three.js, анимации на GSAP и плавная прокрутка." />
+    <meta name="theme-color" content="#06070b" />
+    <meta property="og:title" content="Aurora One — звук, который видно" />
+    <meta property="og:description" content="Концепт-лендинг: 3D на Three.js, анимации GSAP, плавная прокрутка Lenis." />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Перейти к содержанию</a>
+
+    <div class="preloader" id="preloader" aria-hidden="true">
+      <p class="preloader__brand">Aurora One</p>
+      <p class="preloader__count"><span id="preloader-value">0</span>%</p>
+      <div class="preloader__bar"><i id="preloader-bar"></i></div>
+    </div>
+
+    <canvas id="stage" aria-hidden="true"></canvas>
+    <div class="poster" aria-hidden="true"><div class="poster__speaker"><i></i></div></div>
+    <div class="cursor" aria-hidden="true"><i></i></div>
+
+    <header class="nav">
+      <a class="nav__logo" href="#top" aria-label="Aurora One, в начало">
+        <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true">
+          <circle cx="16" cy="16" r="13" fill="none" stroke="url(#logo-gradient)" stroke-width="3" />
+          <defs>
+            <linearGradient id="logo-gradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#2affc6" />
+              <stop offset="0.5" stop-color="#3b7bff" />
+              <stop offset="1" stop-color="#b45cff" />
+            </linearGradient>
+          </defs>
+        </svg>
+        aurora
+      </a>
+      <nav class="nav__links" aria-label="Разделы">
+        <a href="#inside">Внутри</a>
+        <a href="#light">Свет</a>
+        <a href="#colors">Цвета</a>
+        <a href="#specs">Характеристики</a>
+      </nav>
+      <a class="nav__cta magnetic" href="#cta">Это концепт</a>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <p class="eyebrow" data-intro>Aurora One · умная колонка</p>
+        <h1 class="hero__title" id="hero-title" data-split>Звук,<br />который видно</h1>
+        <p class="hero__lead" data-intro>Колонка, свет и голосовой помощник в одном корпусе высотой 19 сантиметров.</p>
+        <div class="hero__actions" data-intro>
+          <a class="button button--primary magnetic" href="#inside">Заглянуть внутрь</a>
+          <a class="button magnetic" href="#light">Включить свет</a>
+        </div>
+        <p class="scroll-hint" data-intro aria-hidden="true"><i></i>Листайте</p>
+      </section>
+
+      <section class="manifesto" id="manifesto" aria-label="О продукте">
+        <p class="manifesto__text" data-words>
+          Мы спрятали студию в девятнадцать сантиметров. Семь твитеров, сабвуфер и кольцо света, которое чувствует ритм.
+          Никаких проводов, кнопок и инструкций — просто поставьте на стол.
+        </p>
+      </section>
+
+      <section class="inside" id="inside" aria-labelledby="inside-title">
+        <div class="inside__pin">
+          <header class="section-head">
+            <p class="eyebrow">Внутри</p>
+            <h2 id="inside-title">Инженерия, которую не видно</h2>
+          </header>
+          <ul class="callouts" id="callouts"></ul>
+        </div>
+      </section>
+
+      <section class="light" id="light" aria-labelledby="light-title">
+        <div class="light__pin">
+          <p class="eyebrow">Свет</p>
+          <h2 id="light-title"><span class="light__counter" id="light-counter">16 777 216</span> оттенков</h2>
+          <p class="light__text">
+            Кольцо из 96 светодиодов под стеклом подстраивает цвет под музыку, время суток и ваше настроение.
+          </p>
+          <div class="modes" id="modes" role="group" aria-label="Режим света"></div>
+          <p class="modes__description" id="mode-description" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="scenarios" id="scenarios" aria-labelledby="scenarios-title">
+        <div class="scenarios__pin">
+          <header class="section-head">
+            <p class="eyebrow">Один для всего дня</p>
+            <h2 id="scenarios-title">Сценарии, которые настраиваются сами</h2>
+          </header>
+          <ol class="scenarios__track" id="scenarios-track"></ol>
+        </div>
+      </section>
+
+      <section class="colors" id="colors" aria-labelledby="colors-title">
+        <div class="colors__content">
+          <p class="eyebrow">Цвета</p>
+          <h2 id="colors-title" data-reveal>Три оттенка ткани</h2>
+          <p class="colors__name" id="color-name" aria-live="polite"></p>
+          <p class="colors__description" id="color-description"></p>
+          <div class="swatches" id="swatches" role="group" aria-label="Цвет корпуса"></div>
+        </div>
+      </section>
+
+      <section class="specs" id="specs" aria-labelledby="specs-title">
+        <header class="section-head">
+          <p class="eyebrow">Характеристики</p>
+          <h2 id="specs-title" data-reveal>Цифры</h2>
+        </header>
+        <dl class="specs__grid" id="specs-grid"></dl>
+      </section>
+
+      <section class="cta" id="cta" aria-labelledby="cta-title">
+        <p class="eyebrow">Это концепт</p>
+        <h2 class="cta__title" id="cta-title" data-reveal>Aurora One не существует.<br />А такой сайт — может.</h2>
+        <p class="cta__text">
+          Лендинг сделан как проект для портфолио: 3D-модель целиком построена кодом на Three.js, анимации — GSAP и ScrollTrigger,
+          плавная прокрутка — Lenis. Никаких готовых моделей и картинок.
+        </p>
+        <div class="cta__actions">
+          <a class="button button--primary magnetic" href="https://t.me/legeng163" target="_blank" rel="noopener">Обсудить проект</a>
+          <a class="button magnetic" href="https://github.com/Qwertyzxas/aurora" target="_blank" rel="noopener">Исходный код</a>
+          <a class="button magnetic" href="https://qwertyzxas.github.io/portfolio/">Портфолио</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee__track">
+          <span>Aurora One · Звук, который видно · </span><span>Aurora One · Звук, который видно · </span>
+        </div>
+      </div>
+      <p class="footer__note">© 2026 Тимур · Концепт-проект. Aurora One — вымышленный продукт, бренд и характеристики придуманы.</p>
+    </footer>
+
+    <noscript><p class="noscript">Для 3D-сцены и анимаций нужен JavaScript — но весь текст доступен и без него.</p></noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
