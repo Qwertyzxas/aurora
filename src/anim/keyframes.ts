@@ -17,6 +17,7 @@ const base: SceneState = { x: 0, y: 0, scale: 1, rotY: 0, rotX: 0.15, explode: 0
 const at = (over: Partial<SceneState>): SceneState => ({ ...base, ...over });
 
 export const HERO_STATE = at({ x: 0.42, y: -0.04, scale: 0.92, rotY: -0.5, rotX: 0.2, glow: 0.75 });
+const CTA_STATE = at({ x: 0, y: 0.02, scale: 0.62, rotY: 6.9, rotX: 0.3, glow: 1.1, opacity: 0.3 });
 
 export const KEYFRAMES: KeySpec[] = [
   { trigger: '#top', start: 'top top', state: HERO_STATE },
@@ -36,5 +37,9 @@ export const KEYFRAMES: KeySpec[] = [
   { trigger: '#colors', start: 'top 30%', state: at({ x: 0.45, scale: 0.9, rotY: 5, rotX: 0.12, glow: 0.6 }) },
   // specs and the finale: the product becomes a quiet background element
   { trigger: '#specs', start: 'top center', state: at({ x: 0.75, y: 0.1, scale: 0.7, rotY: 5.8, opacity: 0.22, glow: 0.5 }) },
-  { trigger: '#cta', start: 'top center', state: at({ x: 0, y: 0.02, scale: 0.62, rotY: 6.9, rotX: 0.3, glow: 1.1, opacity: 0.3 }) },
+  { trigger: '#cta', start: 'top center', state: CTA_STATE },
+  // the scene is fixed behind the page: fade it out while the opaque footer slides in,
+  // otherwise the footer's top edge slices straight through the model
+  { trigger: '.footer', start: 'top bottom', state: CTA_STATE },
+  { trigger: '.footer', start: 'top 70%', state: { ...CTA_STATE, opacity: 0 } },
 ];
