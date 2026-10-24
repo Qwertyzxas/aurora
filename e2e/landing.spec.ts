@@ -9,6 +9,17 @@ async function open(page: Page) {
   return errors;
 }
 
+/** Makes the browser report no WebGL support, as some old or locked-down machines do. */
+async function disableWebGL(page: Page) {
+  await page.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
+      if (type.startsWith('webgl')) return null;
+      return (original as (...a: unknown[]) => unknown).call(this, type, ...rest);
+    } as typeof original;
+  });
+}
+
 async function scrollToSection(page: Page, selector: string, extra = 0) {
   await page.evaluate(
     ([sel, offset]) => {
@@ -41,8 +52,9 @@ test.describe('desktop', () => {
   });
 
   test('switches light modes and fabric colours', async ({ page }) => {
-    // this checks the switching logic, not scrolling: the calm mode has no pinning and no
-    // smooth scrolling, so the buttons don't keep moving under a slow CI renderer
+    // this checks the switching UI, not the 3D scene: a software WebGL renderer in CI blocks
+    // the page for ~1 s per frame and makes clicks flaky, so run without WebGL and motion
+    await disableWebGL(page);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
     await scrollToSection(page, '#light', 200);
@@ -104,13 +116,7 @@ test.describe('fallbacks', () => {
   });
 
   test('shows a static poster when WebGL is unavailable', async ({ page }) => {
-    await page.addInitScript(() => {
-      const original = HTMLCanvasElement.prototype.getContext;
-      HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
-        if (type.startsWith('webgl')) return null;
-        return (original as (...a: unknown[]) => unknown).call(this, type, ...rest);
-      } as typeof original;
-    });
+    await disableWebGL(page);
     const errors = await open(page);
     await expect(page.locator('html')).toHaveClass(/no-webgl/);
     await expect(page.locator('.poster')).toBeVisible();
