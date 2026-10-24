@@ -9,6 +9,7 @@ import { connectLenis, driveScene, heroIntro, scrollAnimations } from './anim/sc
 import { $, renderContent } from './dom/render';
 import { Stage } from './scene/Stage';
 import { setupAnchors, setupColors, setupLightModes, setupPointerEffects } from './ui/interactions';
+import { fitWordmark } from './ui/wordmark';
 
 const root = document.documentElement;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -40,6 +41,7 @@ function progress(value: number) {
 
 async function start() {
   renderContent();
+  fitWordmark();
   const startedAt = performance.now();
 
   let stage: Stage | null = null;
