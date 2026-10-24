@@ -42,12 +42,18 @@ test.describe('desktop', () => {
 
   test('switches light modes and fabric colours', async ({ page }) => {
     await open(page);
+    // scroll there first, like a person would: letting Playwright auto-scroll into a pinned
+    // section under smooth scrolling makes it wait for the button to stop moving
+    await scrollToSection(page, '#light', 200);
     const sunset = page.getByRole('group', { name: 'Режим света' }).getByRole('button', { name: 'Закат' });
+    await expect(sunset).toBeInViewport();
     await sunset.click();
     await expect(sunset).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('#mode-description')).toContainText('Тёплый свет');
 
+    await scrollToSection(page, '#colors');
     const sand = page.getByRole('group', { name: 'Цвет корпуса' }).getByRole('button', { name: 'Песок' });
+    await expect(sand).toBeInViewport();
     await sand.click();
     await expect(sand).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('#color-name')).toHaveText('Песок');
