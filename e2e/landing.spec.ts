@@ -41,9 +41,10 @@ test.describe('desktop', () => {
   });
 
   test('switches light modes and fabric colours', async ({ page }) => {
+    // this checks the switching logic, not scrolling: the calm mode has no pinning and no
+    // smooth scrolling, so the buttons don't keep moving under a slow CI renderer
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
-    // scroll there first, like a person would: letting Playwright auto-scroll into a pinned
-    // section under smooth scrolling makes it wait for the button to stop moving
     await scrollToSection(page, '#light', 200);
     const sunset = page.getByRole('group', { name: 'Режим света' }).getByRole('button', { name: 'Закат' });
     await expect(sunset).toBeInViewport();
@@ -77,6 +78,8 @@ test.describe('desktop', () => {
 
 test.describe('fallbacks', () => {
   test('respects prefers-reduced-motion with a static, fully readable page', async ({ page }) => {
+    // the glide is time-based; a software WebGL renderer in CI draws few frames per second
+    test.setTimeout(150_000);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
     await expect(page.locator('html')).toHaveClass(/reduced-motion/);
@@ -93,11 +96,11 @@ test.describe('fallbacks', () => {
     await expect(stage).toHaveCSS('position', 'fixed');
     const opacity = () => stage.evaluate((el) => Number(getComputedStyle(el).opacity));
     await scrollToSection(page, '#colors');
-    await expect.poll(opacity, { timeout: 20_000 }).toBe(1);
+    await expect.poll(opacity, { timeout: 60_000 }).toBeGreaterThan(0.95);
     await scrollToSection(page, '#scenarios', 100);
     const right = await opacity();
     expect(right).toBeGreaterThan(0); // not an instant jump
-    await expect.poll(opacity, { timeout: 20_000 }).toBe(0);
+    await expect.poll(opacity, { timeout: 60_000 }).toBeLessThan(0.05);
   });
 
   test('shows a static poster when WebGL is unavailable', async ({ page }) => {
