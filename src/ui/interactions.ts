@@ -76,6 +76,14 @@ export function setupAnchors(lenis: Lenis | null) {
   });
 }
 
+/** Once the page leaves the hero, the fixed nav gets a backdrop so headings don't run through it. */
+export function setupNavBackdrop() {
+  const nav = $('.nav');
+  const update = () => nav.classList.toggle('is-scrolled', window.scrollY > 24);
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+}
+
 /** Dot cursor with a lagging ring; magnetic buttons pull towards the pointer. */
 export function setupPointerEffects() {
   if (!matchMedia('(pointer: fine)').matches) return;

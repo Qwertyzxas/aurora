@@ -8,7 +8,7 @@ import { HERO_STATE } from './anim/keyframes';
 import { connectLenis, driveScene, heroIntro, scrollAnimations } from './anim/scroll';
 import { $, renderContent } from './dom/render';
 import { Stage } from './scene/Stage';
-import { setupAnchors, setupColors, setupLightModes, setupPointerEffects } from './ui/interactions';
+import { setupAnchors, setupColors, setupLightModes, setupNavBackdrop, setupPointerEffects } from './ui/interactions';
 import { fitWordmark } from './ui/wordmark';
 
 const root = document.documentElement;
@@ -78,6 +78,7 @@ async function start() {
   // Reduced motion keeps the product on screen too — it just doesn't fly between sections.
   if (stage) driveScene(stage, reducedMotion);
   setupAnchors(lenis);
+  setupNavBackdrop();
   stage?.start();
 
   // reveal
