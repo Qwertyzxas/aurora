@@ -21,7 +21,6 @@ import { dampState, type SceneState } from './state';
 
 const FOV = 30;
 const CAMERA_Z = 9;
-/** Height of the model in world units (shell + base) */
 const MODEL_HEIGHT = 2;
 
 export interface ScreenPoint {
@@ -31,7 +30,6 @@ export interface ScreenPoint {
 
 export class Stage {
   readonly speaker = new Speaker();
-  /** where the scene should be; set from scroll every frame */
   target: SceneState;
   private current: SceneState;
 
@@ -69,7 +67,6 @@ export class Stage {
     this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     this.scene.environmentIntensity = 0.22;
 
-    // strong key from the right, faint fill from the left: gives the fabric a readable form
     const key = new DirectionalLight('#ffffff', 2.6);
     key.position.set(5, 3.5, 4);
     const fill = new DirectionalLight('#9fb4ff', 0.35);
@@ -83,7 +80,6 @@ export class Stage {
 
     this.composer = new EffectComposer(this.renderer);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
-    // only the HDR light ring is bright enough to cross the threshold
     this.composer.addPass(new UnrealBloomPass(new Vector2(256, 256), 0.7, 0.5, 0.9));
     this.composer.addPass(new OutputPass());
 
@@ -96,7 +92,6 @@ export class Stage {
     this.resize();
   }
 
-  /** Compiles shaders up front so the first scroll doesn't stutter. */
   warmUp() {
     this.speaker.setExplode(0.5);
     this.renderer.compile(this.scene, this.camera);
@@ -117,7 +112,6 @@ export class Stage {
     this.rimB.color.copy(b);
   }
 
-  /** Screen position (CSS px) of a point inside the model. */
   project(anchor: AnchorId): ScreenPoint {
     this.speaker.anchors[anchor].getWorldPosition(this.tmp).project(this.camera);
     const rect = this.canvas.getBoundingClientRect();
@@ -139,14 +133,11 @@ export class Stage {
     this.halfHeight = Math.tan(((FOV / 2) * Math.PI) / 180) * CAMERA_Z;
     this.halfWidth = this.halfHeight * this.camera.aspect;
     this.narrow = this.camera.aspect < 0.9;
-    // the model fills ~56% of the height, but never more than ~62% of the width
     this.baseScale = Math.min((this.halfHeight * 2 * 0.56) / MODEL_HEIGHT, (this.halfWidth * 2 * 0.62) / MODEL_HEIGHT);
   }
 
   private apply(s: SceneState, time: number) {
     const root = this.speaker.root;
-    // on portrait screens text sits on top of the model, so it stays centred
-    // and moves to the lower part of the screen, below the headline
     const xFactor = this.narrow ? 0 : 1;
     const yShift = this.narrow ? -0.56 : 0;
     root.position.set(s.x * this.halfWidth * xFactor, (s.y + yShift) * this.halfHeight, 0);
@@ -161,13 +152,11 @@ export class Stage {
   private tick(time: number) {
     const dt = this.lastTime ? Math.min(time - this.lastTime, 0.1) : 0.016;
     this.lastTime = time;
-    // reduced motion: the target only changes once per section, and the model glides
-    // there over ~1 s (a calmer rate) instead of jumping
     this.current = dampState(this.current, this.target, this.options.reducedMotion ? 3 : 5, dt);
     this.pointerSmooth.lerp(this.pointer, 1 - Math.exp(-3 * dt));
 
     this.canvas.style.opacity = String(this.current.opacity);
-    if (this.current.opacity < 0.01) return; // hidden behind the gallery: skip rendering
+    if (this.current.opacity < 0.01) return;
     this.speaker.update(time);
     this.apply(this.current, time);
     this.composer.render(dt);

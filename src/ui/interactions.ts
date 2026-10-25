@@ -9,7 +9,6 @@ function pressOnly(group: HTMLElement, active: HTMLElement) {
   for (const button of group.querySelectorAll('button')) button.setAttribute('aria-pressed', String(button === active));
 }
 
-/** Tween a three.js Color towards a hex value. */
 const tweenColor = (color: Color, hex: string, duration: number) => {
   const to = new Color(hex);
   return gsap.to(color, { r: to.r, g: to.g, b: to.b, duration, ease: 'power2.out' });
@@ -59,7 +58,6 @@ export function setupColors(stage: Stage | null, duration: number) {
   apply(COLORS[0]!, false);
 }
 
-/** In-page links scroll smoothly and move focus for keyboard and screen-reader users. */
 export function setupAnchors(lenis: Lenis | null) {
   document.addEventListener('click', (event) => {
     const link = (event.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
@@ -76,7 +74,6 @@ export function setupAnchors(lenis: Lenis | null) {
   });
 }
 
-/** Once the page leaves the hero, the fixed nav gets a backdrop so headings don't run through it. */
 export function setupNavBackdrop() {
   const nav = $('.nav');
   const update = () => nav.classList.toggle('is-scrolled', window.scrollY > 24);
@@ -84,7 +81,6 @@ export function setupNavBackdrop() {
   update();
 }
 
-/** Dot cursor with a lagging ring; magnetic buttons pull towards the pointer. */
 export function setupPointerEffects() {
   if (!matchMedia('(pointer: fine)').matches) return;
   document.documentElement.classList.add('has-cursor');

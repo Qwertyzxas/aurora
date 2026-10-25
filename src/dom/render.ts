@@ -4,7 +4,6 @@ import { formatNumber } from '../lib/format';
 export const $ = <T extends HTMLElement = HTMLElement>(selector: string, root: ParentNode = document) =>
   root.querySelector<T>(selector)!;
 
-/** Tiny element factory: attributes are set as attributes, children as text/nodes — no innerHTML. */
 function h(tag: string, attrs: Record<string, string> = {}, ...children: (Node | string)[]) {
   const node = document.createElement(tag);
   for (const [name, value] of Object.entries(attrs)) node.setAttribute(name, value);
@@ -12,7 +11,6 @@ function h(tag: string, attrs: Record<string, string> = {}, ...children: (Node |
   return node;
 }
 
-/** Builds every data-driven list from content.ts. */
 export function renderContent() {
   $('#callouts').append(
     ...CALLOUTS.map((c) =>

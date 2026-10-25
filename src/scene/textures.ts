@@ -1,9 +1,5 @@
 import { DataTexture, LinearFilter, LinearMipmapLinearFilter, RepeatWrapping, RGBAFormat } from 'three';
 
-/**
- * Normal map of a knitted speaker fabric, computed analytically: a grid of
- * soft bumps (yarn loops) with a slight diagonal twist. No image download.
- */
 export function knitNormalMap(size = 256, period = 8, strength = 1.6): DataTexture {
   const data = new Uint8Array(size * size * 4);
   const k = (2 * Math.PI) / period;
@@ -11,7 +7,6 @@ export function knitNormalMap(size = 256, period = 8, strength = 1.6): DataTextu
     for (let x = 0; x < size; x++) {
       const u = k * x;
       const v = k * y;
-      // height h = sin(u)·sin(v) + 0.3·sin(u + v); derivatives in closed form
       const dx = k * (Math.cos(u) * Math.sin(v) + 0.3 * Math.cos(u + v));
       const dy = k * (Math.sin(u) * Math.cos(v) + 0.3 * Math.cos(u + v));
       let nx = -dx * strength;

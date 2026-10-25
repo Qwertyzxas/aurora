@@ -31,7 +31,6 @@ body {
   overflow-x: clip;
 }
 
-/* film grain over everything, for a print-like finish */
 body::after {
   content: '';
   position: fixed;
@@ -100,7 +99,6 @@ a {
   color: transparent;
 }
 
-/* ── canvas & fallbacks ───────────────────────────────────── */
 #stage {
   position: fixed;
   inset: 0;
@@ -161,7 +159,6 @@ a {
   filter: drop-shadow(0 0 10px #3b7bff);
 }
 
-/* ── preloader ────────────────────────────────────────────── */
 .preloader {
   position: fixed;
   inset: 0;
@@ -203,7 +200,6 @@ a {
   transform-origin: left;
 }
 
-/* ── cursor ───────────────────────────────────────────────── */
 .cursor {
   display: none;
 }
@@ -242,7 +238,6 @@ a {
   opacity: 0;
 }
 
-/* ── nav ──────────────────────────────────────────────────── */
 .nav {
   position: fixed;
   z-index: 50;
@@ -317,7 +312,6 @@ a {
   backdrop-filter: blur(14px);
 }
 
-/* ── buttons ──────────────────────────────────────────────── */
 .button {
   display: inline-flex;
   align-items: center;
@@ -350,7 +344,6 @@ a {
   filter: brightness(1.1);
 }
 
-/* ── layout ───────────────────────────────────────────────── */
 main {
   position: relative;
   z-index: 1;
@@ -366,7 +359,6 @@ section {
   max-width: 14ch;
 }
 
-/* hero */
 .hero {
   min-height: 100svh;
   display: flex;
@@ -430,7 +422,6 @@ section {
   }
 }
 
-/* manifesto */
 .manifesto {
   min-height: 120vh;
   display: grid;
@@ -447,15 +438,12 @@ section {
   text-align: center;
 }
 
-/* inside */
 .inside__pin {
   position: relative;
   height: 100vh;
   padding-top: 120px;
 }
 
-/* cards stack in the free column under the heading; dot and line are positioned in the
-   pinned container every frame from the projected 3D anchor */
 .callouts {
   display: grid;
   gap: 14px;
@@ -512,7 +500,6 @@ section {
   line-height: 1.5;
 }
 
-/* light */
 .light__pin {
   display: flex;
   flex-direction: column;
@@ -578,7 +565,6 @@ section {
   font-size: 15px;
 }
 
-/* scenarios */
 .scenarios {
   padding: 0;
 }
@@ -655,7 +641,6 @@ section {
   font-size: 15px;
 }
 
-/* colors */
 .colors {
   min-height: 110vh;
   display: flex;
@@ -724,7 +709,6 @@ section {
   transform: scale(1.06);
 }
 
-/* specs */
 .specs {
   padding-top: 18vh;
   padding-bottom: 18vh;
@@ -772,7 +756,6 @@ section {
   font-size: 15px;
 }
 
-/* cta */
 .cta {
   min-height: 100vh;
   display: flex;
@@ -802,7 +785,6 @@ section {
   margin-top: 44px;
 }
 
-/* footer */
 .footer {
   position: relative;
   z-index: 1;
@@ -811,8 +793,6 @@ section {
   background: var(--bg);
 }
 
-/* Full-width wordmark: each line is sized in container units so it spans the footer
-   exactly, edge to edge, at any width (see the measured ratios below) */
 .wordmark {
   container-type: inline-size;
   margin: 0 var(--gutter);
@@ -826,16 +806,12 @@ section {
   display: block;
   width: max-content;
   white-space: nowrap;
-  /* a gradient fill, not an outline: Unbounded is a variable font whose glyphs are
-     built from overlapping contours, and text-stroke would draw every inner overlap */
   color: transparent;
   background: var(--aurora);
   -webkit-background-clip: text;
   background-clip: text;
 }
 
-/* measured in the browser: at 100px "Aurora One" is 697.6px wide and the tagline 1316.6px,
-   so 100% of the container needs 14.33cqi and 7.59cqi (slightly less, against rounding) */
 .wordmark__line--brand {
   font-size: 14.3cqi;
 }
@@ -863,8 +839,6 @@ section {
   background: #1a1d2b;
 }
 
-/* ── static layouts: reduced motion, no WebGL, small screens ── */
-/* no live connector lines: the cards stay as a plain column next to the (still) model */
 .reduced-motion .callout__dot,
 .reduced-motion .callout__line,
 .no-webgl .callout__dot,
@@ -911,7 +885,6 @@ section {
     display: none;
   }
 
-  /* the model sits in the lower half on phones, callouts become a list */
   .callouts {
     display: grid;
     width: auto;

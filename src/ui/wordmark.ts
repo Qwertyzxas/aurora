@@ -1,8 +1,3 @@
-/**
- * Makes each footer wordmark line span its container exactly. CSS container units
- * get within ~1–3% on first paint (no layout shift); font hinting at small sizes
- * rounds glyph advances, so this pass measures and corrects the remainder.
- */
 export function fitWordmark() {
   const container = document.querySelector<HTMLElement>('.wordmark');
   if (!container) return;
@@ -11,7 +6,7 @@ export function fitWordmark() {
   const fit = () => {
     const target = container.clientWidth;
     for (const line of lines) {
-      line.style.fontSize = ''; // back to the CSS estimate before measuring
+      line.style.fontSize = '';
       const width = line.getBoundingClientRect().width;
       if (!width) continue;
       const size = parseFloat(getComputedStyle(line).fontSize);
@@ -21,7 +16,7 @@ export function fitWordmark() {
 
   let lastWidth = 0;
   new ResizeObserver(() => {
-    if (container.clientWidth === lastWidth) return; // our own font-size change doesn't re-trigger
+    if (container.clientWidth === lastWidth) return;
     lastWidth = container.clientWidth;
     fit();
   }).observe(container);

@@ -1,6 +1,3 @@
-// Product data rendered into lists. Aurora One is a fictional product.
-
-/** Points inside the 3D model that callouts attach to (see Speaker.anchors). */
 export type AnchorId = 'led' | 'mics' | 'tweeters' | 'woofer';
 
 export const CALLOUTS: { anchor: AnchorId; title: string; text: string }[] = [
@@ -14,7 +11,6 @@ export interface LightMode {
   id: string;
   name: string;
   description: string;
-  /** three gradient stops of the light ring */
   colors: [string, string, string];
 }
 
@@ -30,7 +26,6 @@ export interface ColorVariant {
   description: string;
   fabric: string;
   sheen: string;
-  /** swatch shown in the picker */
   swatch: string;
 }
 

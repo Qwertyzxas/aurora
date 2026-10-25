@@ -27,7 +27,6 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npx playwright install --with-deps chromium
-      # WebGL runs on a software renderer in CI: fewer workers keep frame timing sane
       - run: npm run e2e -- --workers=2
         env:
           CI: true

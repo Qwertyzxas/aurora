@@ -23,7 +23,6 @@ function hasWebGL() {
   }
 }
 
-/** Counts the preloader to `value`% (it never goes backwards). */
 function progress(value: number) {
   const out = $('#preloader-value');
   const bar = $('#preloader-bar');
@@ -59,7 +58,6 @@ async function start() {
   await progress(70);
   stage?.warmUp();
   await progress(100);
-  // a short, intentional beat so the reveal doesn't flash on fast connections
   const elapsed = performance.now() - startedAt;
   if (!reducedMotion && elapsed < 900) await new Promise((r) => setTimeout(r, 900 - elapsed));
 
@@ -74,14 +72,11 @@ async function start() {
     scrollAnimations(stage);
     setupPointerEffects();
   }
-  // keyframe triggers are created after the pins so their positions include pin spacing.
-  // Reduced motion keeps the product on screen too — it just doesn't fly between sections.
   if (stage) driveScene(stage, reducedMotion);
   setupAnchors(lenis);
   setupNavBackdrop();
   stage?.start();
 
-  // reveal
   const preloader = $('#preloader');
   if (reducedMotion) {
     preloader.remove();

@@ -9,7 +9,6 @@ async function open(page: Page) {
   return errors;
 }
 
-/** Makes the browser report no WebGL support, as some old or locked-down machines do. */
 async function disableWebGL(page: Page) {
   await page.addInitScript(() => {
     const original = HTMLCanvasElement.prototype.getContext;
@@ -46,14 +45,11 @@ test.describe('desktop', () => {
     await scrollToSection(page, '#inside', 900);
     await expect(first).toHaveCSS('opacity', '1');
     await expect(first.getByRole('heading')).toHaveText('96 светодиодов');
-    // the dot is placed on the model (right half of the screen), not left at the default
     const dot = await first.locator('.callout__dot').boundingBox();
     expect(dot!.x).toBeGreaterThan(600);
   });
 
   test('switches light modes and fabric colours', async ({ page }) => {
-    // this checks the switching UI, not the 3D scene: a software WebGL renderer in CI blocks
-    // the page for ~1 s per frame and makes clicks flaky, so run without WebGL and motion
     await disableWebGL(page);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
@@ -90,20 +86,16 @@ test.describe('desktop', () => {
 
 test.describe('fallbacks', () => {
   test('respects prefers-reduced-motion with a static, fully readable page', async ({ page }) => {
-    // the glide is time-based; a software WebGL renderer in CI draws few frames per second
     test.setTimeout(150_000);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page);
     await expect(page.locator('html')).toHaveClass(/reduced-motion/);
-    // no pinning, no scroll-driven reveals: every callout is simply there
     const callouts = page.locator('.callout');
     await expect(callouts).toHaveCount(4);
     for (const callout of await callouts.all()) await expect(callout).toHaveCSS('opacity', '1');
     await expect(page.locator('.callout__line').first()).toBeHidden();
     await expect(page.locator('.pin-spacer')).toHaveCount(0);
 
-    // the product stays on screen below the first section and glides between per-section
-    // states (it isn't scrubbed by every pixel of scroll)
     const stage = page.locator('#stage');
     await expect(stage).toHaveCSS('position', 'fixed');
     const opacity = () => stage.evaluate((el) => Number(getComputedStyle(el).opacity));
@@ -111,7 +103,7 @@ test.describe('fallbacks', () => {
     await expect.poll(opacity, { timeout: 60_000 }).toBeGreaterThan(0.95);
     await scrollToSection(page, '#scenarios', 100);
     const right = await opacity();
-    expect(right).toBeGreaterThan(0); // not an instant jump
+    expect(right).toBeGreaterThan(0);
     await expect.poll(opacity, { timeout: 60_000 }).toBeLessThan(0.05);
   });
 

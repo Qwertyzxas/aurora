@@ -22,7 +22,6 @@ import type { AnchorId } from '../content';
 import { backdropShader, ringShader } from './shaders';
 import { knitNormalMap } from './textures';
 
-/** Rounded-rectangle profile revolved into the speaker body (radius 1, height 1.9). */
 function shellProfile(): Vector2[] {
   const pts: Vector2[] = [];
   const r = 1;
@@ -33,7 +32,6 @@ function shellProfile(): Vector2[] {
       pts.push(new Vector2(cx + Math.cos(a) * radius, cy + Math.sin(a) * radius));
     }
   };
-  // soft, generous corners read as "fabric object" rather than "can"
   pts.push(new Vector2(0.62, -h));
   arc(r - 0.32, -h + 0.32, 0.32, -Math.PI / 2, 0);
   arc(r - 0.22, h - 0.22, 0.22, 0, Math.PI / 2);
@@ -45,14 +43,9 @@ const dark = (color: string, roughness = 0.5, metalness = 0) => new MeshStandard
 interface Part {
   object: Object3D;
   baseY: number;
-  /** extra height when fully exploded */
   lift: number;
 }
 
-/**
- * Procedural model of the fictional Aurora One smart speaker, plus the
- * exploded-view internals and the aurora backdrop. No external assets.
- */
 export class Speaker {
   readonly root = new Group();
   readonly backdrop: Mesh;
@@ -63,11 +56,9 @@ export class Speaker {
   private readonly backdropMaterial: ShaderMaterial;
   private readonly internals = new Group();
   private readonly parts: Part[] = [];
-  /** palette shared by the light ring and the backdrop (tweened from outside) */
   readonly palette: [Color, Color, Color] = [new Color(), new Color(), new Color()];
 
   constructor() {
-    // ── fabric shell ───────────────────────────────────
     const knit = knitNormalMap();
     knit.repeat.set(44, 15);
     this.shellMaterial = new MeshPhysicalMaterial({
@@ -85,12 +76,9 @@ export class Speaker {
     shell.renderOrder = 2;
     this.root.add(shell);
 
-    // ── top: glass cap with the light ring ──────────────
     const top = new Group();
-    // the shell's top edge ends at radius 0.78; the glass sits just inside it
     const glass = new Mesh(
       new CylinderGeometry(0.8, 0.8, 0.03, 128),
-      // satin rather than mirror glass: a mirror catches the key light and blooms into a flare
       new MeshPhysicalMaterial({ color: '#07080c', roughness: 0.35, metalness: 0.1, clearcoat: 0.6, clearcoatRoughness: 0.3 }),
     );
     top.add(glass);
@@ -123,7 +111,6 @@ export class Speaker {
     this.addAnchor('led', top, 0, 0.02, 0.6);
     this.addPart(top, 0.955, 0.95);
 
-    // ── internals (visible in the exploded view) ────────
     const mics = new Group();
     const micMaterial = dark('#c7ccd8', 0.35, 0.8);
     for (let i = 0; i < 6; i++) {
@@ -151,7 +138,6 @@ export class Speaker {
     const domeMaterial = dark('#d4d8e2', 0.2, 0.9);
     for (let i = 0; i < 7; i++) {
       const a = (i / 7) * Math.PI * 2;
-      // a horn: the wide mouth faces outwards (the cone's tip points back into the speaker)
       const horn = new Group();
       const cone = new Mesh(new ConeGeometry(0.11, 0.1, 32, 1, true), hornMaterial);
       cone.rotation.x = -Math.PI / 2;
@@ -190,7 +176,6 @@ export class Speaker {
 
     this.root.add(this.internals);
 
-    // ── aurora backdrop, far behind the product (not part of root) ──
     this.backdropMaterial = new ShaderMaterial({
       vertexShader: backdropShader.vertex,
       fragmentShader: backdropShader.fragment,
@@ -226,7 +211,6 @@ export class Speaker {
 
   setExplode(t: number) {
     for (const part of this.parts) part.object.position.y = part.baseY + part.lift * t;
-    // the fabric fades to a ghost so the internals show through
     this.shellMaterial.opacity = 1 - 0.88 * t;
     this.shellMaterial.depthWrite = t < 0.05;
     this.internals.visible = t > 0.01;

@@ -11,17 +11,12 @@ import { KEYFRAMES, stepKeyframes } from './keyframes';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
-/** Smooth scrolling: Lenis drives ScrollTrigger from GSAP's ticker. */
 export function connectLenis(lenis: Lenis) {
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
 }
 
-/**
- * Resolves keyframes to pixel positions and feeds the 3D scene on every frame.
- * With reduced motion the scene jumps between per-section still states instead.
- */
 export function driveScene(stage: Stage, reducedMotion: boolean) {
   const keys = reducedMotion ? stepKeyframes() : KEYFRAMES;
   const evaluate = reducedMotion ? sceneStep : sceneAt;
@@ -48,9 +43,6 @@ export function heroIntro() {
 }
 
 export function scrollAnimations(stage: Stage | null) {
-  // manifesto: words light up one by one as you read. They start grey rather than
-  // transparent so unread text still passes WCAG AA contrast; `aria: 'hidden'` hides the
-  // fragments from screen readers and gives them one intact copy of the sentence instead
   const words = SplitText.create('[data-words]', { type: 'words', aria: 'hidden' }).words;
   gsap.fromTo(
     words,
@@ -63,7 +55,6 @@ export function scrollAnimations(stage: Stage | null) {
     },
   );
 
-  // headings slide up from a mask
   for (const heading of document.querySelectorAll<HTMLElement>('[data-reveal], .section-head h2')) {
     const lines = SplitText.create(heading, { type: 'lines', mask: 'lines' }).lines;
     gsap.from(lines, {
@@ -75,15 +66,12 @@ export function scrollAnimations(stage: Stage | null) {
     });
   }
 
-  // inside: pinned exploded view, callouts appear one after another
   const callouts = gsap.utils.toArray<HTMLElement>('.callout');
   const inside = gsap.timeline({
     scrollTrigger: { trigger: '#inside', start: 'top top', end: '+=200%', pin: '.inside__pin', scrub: 0.6 },
   });
-  inside.to({}, { duration: 0.3 }); // let the model explode first
+  inside.to({}, { duration: 0.3 });
   callouts.forEach((callout, i) => {
-    // the <li> itself is positioned on the 3D anchor every frame, so GSAP only touches
-    // its opacity; the slide-in moves the inner card
     const at = 0.3 + i * 0.12;
     const card = callout.querySelector('.callout__card')!;
     inside.fromTo(callout, { opacity: 0 }, { opacity: 1, duration: 0.18 }, at);
@@ -92,8 +80,6 @@ export function scrollAnimations(stage: Stage | null) {
   inside.to(callouts, { opacity: 0, duration: 0.12 }, 0.9);
 
   if (stage) {
-    // cards sit in a column; a dot marks each part and a line joins card and dot,
-    // re-measured every frame as the model turns and explodes
     const placed = callouts.map((el) => ({
       el,
       card: el.querySelector<HTMLElement>('.callout__card')!,
@@ -101,8 +87,6 @@ export function scrollAnimations(stage: Stage | null) {
     }));
     let active = false;
     ScrollTrigger.create({ trigger: '#inside', start: 'top bottom', end: 'bottom top', onToggle: (self) => (active = self.isActive) });
-    // dots and lines are absolutely positioned inside the pinned container, so every
-    // viewport coordinate is converted into its space (pinning changes its offset)
     const pin = $('.inside__pin');
     stage.onFrame(() => {
       if (!active || stage.isNarrow) return;
@@ -125,7 +109,6 @@ export function scrollAnimations(stage: Stage | null) {
     });
   }
 
-  // light: pinned, the counter races through the colour space
   const counter = $('#light-counter');
   const state = { value: 0 };
   gsap.to(state, {
@@ -137,7 +120,6 @@ export function scrollAnimations(stage: Stage | null) {
     },
   });
 
-  // scenarios: vertical scroll becomes a horizontal track
   const track = $('#scenarios-track');
   const distance = () => Math.max(0, track.scrollWidth - window.innerWidth + 48);
   gsap.to(track, {
@@ -153,7 +135,6 @@ export function scrollAnimations(stage: Stage | null) {
     },
   });
 
-  // specs count up once
   for (const value of document.querySelectorAll<HTMLElement>('.spec__value')) {
     const target = Number(value.dataset.value);
     const decimals = Number(value.dataset.decimals);

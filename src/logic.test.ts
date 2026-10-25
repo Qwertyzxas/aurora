@@ -21,7 +21,7 @@ describe('sceneAt', () => {
 
   it('eases between neighbouring keyframes', () => {
     expect(sceneAt(frames, 50).x).toBeCloseTo(0.5);
-    expect(sceneAt(frames, 25).x).toBeCloseTo(0.125); // ease-in at the start of a segment
+    expect(sceneAt(frames, 25).x).toBeCloseTo(0.125);
     expect(sceneAt(frames, 200)).toMatchObject({ x: expect.closeTo(0, 5), explode: expect.closeTo(0.5, 5) });
   });
 

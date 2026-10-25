@@ -1,9 +1,8 @@
-const palette = /* glsl */ `
+const palette = `
 uniform vec3 uColorA;
 uniform vec3 uColorB;
 uniform vec3 uColorC;
 
-// smooth 3-stop loop: A → B → C → A
 vec3 palette(float t) {
   t = fract(t) * 3.0;
   if (t < 1.0) return mix(uColorA, uColorB, smoothstep(0.0, 1.0, t));
@@ -12,16 +11,15 @@ vec3 palette(float t) {
 }
 `;
 
-/** Flowing aurora light ring under the top glass. Outputs HDR values for bloom. */
 export const ringShader = {
-  vertex: /* glsl */ `
+  vertex: `
 varying vec2 vPos;
 void main() {
   vPos = position.xy;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }
 `,
-  fragment: /* glsl */ `
+  fragment: `
 uniform float uTime;
 uniform float uGlow;
 uniform float uInner;
@@ -39,7 +37,6 @@ void main() {
              + sin(band * 9.0 - uTime * 0.6) * 0.2;
   vec3 color = palette(angle / 6.2831 + flow * 0.18 + uTime * 0.03);
 
-  // bright core line with soft falloff to both edges
   float profile = exp(-pow((band - 0.55) * 3.2, 2.0));
   float shimmer = 0.75 + 0.25 * sin(angle * 24.0 + uTime * 4.0 + flow * 3.0);
   float intensity = profile * shimmer * uGlow;
@@ -49,16 +46,15 @@ void main() {
 `,
 };
 
-/** Huge soft curtains of light far behind the product; tinted by the same palette. */
 export const backdropShader = {
-  vertex: /* glsl */ `
+  vertex: `
 varying vec2 vUv;
 void main() {
   vUv = uv;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }
 `,
-  fragment: /* glsl */ `
+  fragment: `
 uniform float uTime;
 uniform float uStrength;
 varying vec2 vUv;
